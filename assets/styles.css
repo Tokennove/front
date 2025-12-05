@@ -1,0 +1,224 @@
+/* 轻量的暗色风格，模仿截图布局 */
+:root{
+  --bg:#0b0d10;
+  --panel:#0f1316;
+  --muted:#9aa3aa;
+  --accent:#00d27a;
+  --accent-2:#00c2a3;
+  --blue:#2b7bdc;
+  --card:#0d1114;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background:linear-gradient(180deg,#050606 0%, #071012 100%);
+  color:#e6eef2;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:1100px;
+  margin:32px auto;
+  padding:28px;
+}
+.page-header h1{font-size:28px;margin:0}
+.subtitle{color:var(--muted);margin-top:6px}
+
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin:22px 0 18px 0;
+}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.04);
+  padding:18px 20px;
+  border-radius:10px;
+}
+.card .label{font-size:13px;color:var(--muted)}
+.card .value{font-weight:700;font-size:20px;margin-top:6px}
+.value--green{color:var(--accent)}
+
+.controls{margin:14px 0 20px 0}
+#search{
+  width:100%;
+  padding:12px 14px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(255,255,255,0.04);
+  color:inherit;
+  outline:none;
+}
+#search::placeholder{color:var(--muted)}
+
+.table-wrap{margin-top:6px;background:transparent}
+.positions{width:100%;border-collapse:collapse;font-size:14px}
+.positions thead th{
+  text-align:left;padding:12px 16px;color:var(--muted);font-size:13px;border-bottom:1px solid rgba(255,255,255,0.03)
+}
+.positions tbody tr{border-bottom:1px solid rgba(255,255,255,0.03)}
+.positions td{padding:12px 16px;vertical-align:middle}
+.platform{display:flex;align-items:center;gap:12px}
+.platform .logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+.coin{color:var(--muted)}
+.num--green{color:var(--accent)}
+.num--muted{color:var(--muted)}
+.apy-pill{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg, rgba(43,123,220,0.12), rgba(32,92,183,0.06));color:var(--blue);font-weight:600}
+.footer-note{margin-top:14px;color:var(--muted);font-size:12px}
+
+/* visually hidden, accessible label */
+.sr-only{
+  position:absolute!important;
+  width:1px!important;
+  height:1px!important;
+  padding:0!important;
+  margin:-1px!important;
+  overflow:hidden!important;
+  clip:rect(0,0,0,0)!important;
+  white-space:nowrap!important;
+  border:0!important;
+}
+
+/* Responsive */
+@media (max-width:900px){
+  .wrap{padding:16px}
+  .summary{grid-template-columns:repeat(1,1fr)}
+  .positions thead{display:none}
+  .positions, .positions tbody, .positions tr, .positions td{display:block;width:100%}
+  .positions tr{margin-bottom:12px}
+  .positions td{padding:10px;background:transparent}
+  .positions td::before{content:attr(data-label);display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+}
+
+/* Sortable header buttons: use pseudo-element arrows, default show muted ▲▼,
+   when button has aria-sort="ascending"/"descending" show single arrow in accent color.
+   This replaces previous span-based arrow implementation and removes default price highlight. */
+
+.th-btn{
+  background:none;
+  border:0;
+  color:inherit;
+  font-weight:600;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:6px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px; /* reduce gap so arrow sits closer to label as in UI */
+  font-size:13px;
+}
+.th-btn:focus{outline:2px solid rgba(43,123,220,0.18)}
+
+/* indicator: default muted double arrow */
+.sort-indicator{
+  display:inline-block;
+  font-size:12px;
+  color:var(--muted);
+  margin-left:2px; /* closer to label */
+  line-height:1;
+  width:auto;
+}
+.sort-indicator::before{
+  content: '▲▼';
+  display:inline-block;
+  color:var(--muted);
+}
+
+/* aria-sort 控制单向高亮箭头 */
+.th-btn[aria-sort="ascending"] .sort-indicator::before{
+  content: '▲';
+  color: var(--accent);
+}
+.th-btn[aria-sort="descending"] .sort-indicator::before{
+  content: '▼';
+  color: var(--accent);
+}
+
+/* Active header color when sorted (keeps consistent with aria-sort) */
+.th-btn[aria-sort]{
+  color:var(--accent);
+  font-weight:700;
+  box-shadow: inset 0 -2px 0 rgba(0,210,122,0.08);
+}
+
+/* Ensure price values are prominently visible (white, slightly larger) */
+.price-val{
+  color:#ffffff;
+  font-weight:700;
+  font-size:14px;
+}
+
+/* positive/negative number styles for gains */
+.num--green{
+  color:var(--accent);
+  font-weight:700;
+}
+.num--muted{
+  color:var(--muted);
+  font-weight:600;
+}
+/* 明确的红色样式用于负收益，严格按 UI 要求显示为红色 */
+.num--red{
+  color:#ff4d4f; /* 常见的警示红色 */
+  font-weight:700;
+}
+
+/* Pagination styles moved from inline head to here to keep styles consolidated */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.page-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: #dfe7ea;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background .12s ease, border-color .12s ease;
+}
+.page-btn:hover:not([disabled]){
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.08);
+}
+.page-btn[disabled]{
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.page-info{
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  font-size: 13px;
+  color: var(--muted);
+}
+.page-size{
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.02);
+  color: inherit;
+}
+
+/* Price header small marker to make price column visually identifiable */
+.price-marker{
+  font-size:12px;
+  color: var(--muted);
+  margin-left:6px;
+  font-weight:600;
+}
+
+/* Narrow screens adjustments for pagination */
+@media (max-width:480px){
+  .pagination{gap:8px}
+  .page-info{font-size:12px;padding:5px 8px}
+}
+
+/* 保持末尾空行 */
