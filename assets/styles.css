@@ -1,22 +1,33 @@
-/* Web3 风格 - #efeded 背景配合鲜艳霓虹色系 */
+/* Aave 风格配色方案 */
 :root {
     --bg: #efeded;
     --bg-gradient: linear-gradient(135deg, #efeded 0%, #e8e8e8 50%, #efeded 100%);
     --panel: rgba(100, 150, 255, 0.03);
-    --muted: #6b7280;
-    --accent: #00e676;
+
+    /* Aave 文本颜色 */
+    --text-white: #FFFFFF;              /* 标题（白色） */
+    --text-subtitle: #C3C6D1;           /* 副标题（浅灰） */
+    --text-highlight: #1e293b;          /* 数字高亮（深色，白色背景上使用） */
+    --text: #1e293b;                    /* 主文本 */
+    --muted: #C3C6D1;                   /* 次要文本 */
+
+    /* Aave 品牌色 */
+    --aave-pink: #B6509E;               /* Aave 青绿色（偏粉） */
+    --aave-cyan: #2EBAC6;               /* Aave 青色 */
+    --aave-gradient: linear-gradient(135deg, #B6509E 0%, #2EBAC6 100%);
+
+    /* 保留的功能色 */
+    --accent: #00e676;                  /* 绿色（正收益） */
     --accent-glow: rgba(0, 230, 118, 0.3);
-    --accent-2: #00b8ff;
-    --accent-2-glow: rgba(0, 184, 255, 0.3);
-    --purple: #9c27ff;
-    --purple-glow: rgba(156, 39, 255, 0.3);
-    --blue: #2196f3;
+    --accent-2: #2EBAC6;                /* Aave 青色 */
+    --accent-2-glow: rgba(46, 186, 198, 0.3);
+    --purple: #B6509E;                  /* Aave 粉紫色 */
+    --purple-glow: rgba(182, 80, 158, 0.3);
+
     --card: #ffffff;
-    --card-border: rgba(0, 184, 255, 0.3);
-    --text: #1e293b;
-    --text-secondary: #64748b;
+    --text-secondary: #C3C6D1;
     --border: rgba(100, 150, 255, 0.2);
-    --shadow: rgba(0, 184, 255, 0.15);
+    --shadow: rgba(0, 0, 0, 0.1);
 }
 
 * {
@@ -54,7 +65,7 @@ body {
 .page-header h1 {
     font-size: 32px;
     margin: 0;
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 50%, var(--purple) 100%);
+    background: var(--aave-gradient);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -63,7 +74,7 @@ body {
 }
 
 .subtitle {
-    color: var(--muted);
+    color: var(--text-subtitle);
     margin-top: 6px
 }
 
@@ -92,14 +103,14 @@ body {
 
 .card .label {
     font-size: 13px;
-    color: var(--muted)
+    color: var(--text-subtitle)
 }
 
 .card .value {
     font-weight: 700;
     font-size: 24px;
     margin-top: 8px;
-    color: var(--text);
+    color: var(--text-highlight);
     letter-spacing: -0.5px;
 }
 
@@ -174,6 +185,7 @@ body {
     text-align: center;
 }
 
+
 /* 收益曲线列特殊样式 - 确保 SVG 在容器内 */
 .positions thead th:nth-child(10) {
     min-width: 110px;
@@ -247,6 +259,13 @@ body {
     color: var(--muted)
 }
 
+/* 本金币种列 - 文字样式 */
+.coin-name {
+    font-weight: 600;
+    color: var(--text);
+    font-size: 14px;
+}
+
 .num--green {
     color: var(--accent)
 }
@@ -260,16 +279,17 @@ body {
     padding: 6px 12px;
     border-radius: 999px;
     background: #f5f5f5;
-    border: 1.5px solid #efeded;
-    color: var(--text);
+    border: 1.5px solid #e0e0e0;
+    color: #00b4e6;
     font-weight: 600;
     font-size: 13px;
     transition: all 0.3s ease;
 }
 
 .apy-pill:hover {
-    background: #ebebeb;
     transform: scale(1.05);
+    background: #ebebeb;
+    border-color: #d0d0d0;
 }
 
 .footer-note {

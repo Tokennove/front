@@ -142,7 +142,7 @@ function renderTable() {
             return `
       <tr>
         <td data-label="平台"><span class="platform">${escapeHtml(row.platform)}</span></td>
-        <td data-label="本金币种">${escapeHtml(row.coin)}</td>
+        <td data-label="本金币种"><span class="coin-name">${escapeHtml(row.coin)}</span></td>
         <td data-label="当前价"><span class="price-val">$${formatSimpleNumber(row.price)}</span></td>
         <td data-label="本金">$${formatSimpleNumber(row.principal)}</td>
         <td data-label="今日收益" class="${todayClass}">${formatSignNumber(row.today)}</td>
