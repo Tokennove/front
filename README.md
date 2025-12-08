@@ -1,110 +1,216 @@
-# 质押投资组合（示例项目）
+# Alpha 投资组合 - Web3 风格看板
 
-这是一个最小示例项目，包含一个简单的后端（Node/Express）与静态前端页面。后端通过接口返回三项汇总（本金总金、今日总收益、总体收益）以及 `originalData` 原始数据，前端负责拉取数据并渲染表格、支持排序、分页和搜索。
+一个专为加密货币投资组合设计的可视化看板，采用现代 Web3 UI 风格，提供实时收益追踪和数据分析功能。
 
-## 项目结构（重要文件）
+## ✨ 特性
 
-- `server.js` - 后端服务（Express），暴露 `GET /api/portfolio` 接口并托管静态文件
-- `index.html` - 前端页面入口（项目根）
-- `assets/script.js` - 前端脚本：请求后端、渲染表格、排序、分页、搜索等逻辑
-- `assets/styles.css` - 页面样式（可调整）
+### 🎨 Web3 视觉风格（白色主题）
+- **明亮简洁**：纯白色背景配合浅色渐变光效，确保最佳可读性
+- **霓虹渐变色系**：使用青色（#00b8ff）、绿色（#00e676）、紫色（#9c27ff）等鲜艳的 Web3 配色
+- **彩色边框**：卡片和组件采用彩虹渐变边框（绿→青→紫）
+- **动态交互**：悬停光晕效果、渐变背景动画、平滑过渡
+- **智能图表**：收益曲线根据涨跌自动变色（绿色上涨/红色下跌）
 
+### 📊 核心功能
+- **投资组合总览**：实时显示本金总额、今日收益、总体收益
+- **多平台支持**：支持 Binance、Coinbase、Kraken、OKX 等主流交易平台
+- **数据可视化**：
+  - 收益曲线迷你图表（带渐变填充和光晕效果）
+  - 实时价格监控
+  - APY 标签展示
+  - 正负收益颜色区分
+- **智能搜索**：按平台或币种快速筛选
+- **排序功能**：点击列标题按任意字段升序/降序排列
+- **分页浏览**：每页显示 10 条记录，支持翻页
 
-## 环境要求
+### 🛠 技术栈
+- **前端**：原生 HTML5 + CSS3 + JavaScript (ES6+)
+- **后端**：Node.js + Express
+- **样式**：自定义 CSS（无依赖框架）
+- **图表**：SVG 原生渲染
 
-- Node.js（建议 >= 14）
-- npm（随 Node 一起）
+## 🚀 快速开始
 
-## 快速开始
+### 环境要求
+- Node.js >= 14.x
+- npm >= 6.x
 
-1. 安装依赖（如果尚未安装）
+### 安装步骤
 
-```powershell
-npm install express cors
+1. **克隆或下载项目**
+```bash
+cd earn-view
 ```
 
-2. 启动后端服务
+2. **安装依赖**
+```bash
+npm install
+```
 
-```powershell
+3. **启动服务**
+```bash
 node server.js
 ```
 
-> 推荐（开发时）使用 `nodemon` 自动重启：
->
-```powershell
-npm install -g nodemon
-nodemon server.js
+4. **访问应用**
+```
+打开浏览器访问：http://localhost:3000
 ```
 
-3. 在浏览器打开页面
-
-浏览器地址栏访问：
+## 📁 项目结构
 
 ```
-http://localhost:3000/
+earn-view/
+├── server.js           # Express 后端服务器
+├── index.html          # 主页面 HTML
+├── package.json        # 项目依赖配置
+├── README.md          # 项目说明文档
+└── assets/
+    ├── script.js      # 前端 JavaScript 逻辑
+    └── styles.css     # Web3 风格样式表
 ```
 
-注意：请务必通过 HTTP(S) 访问页面（例如上面的地址），不要直接用 `file://` 打开 `index.html`，否则脚本的 fetch 可能因跨域或路径问题无法正确请求后端。
+## 🎯 数据结构
 
+### API 接口
+**GET** `/api/portfolio`
 
-## API 说明
-
-- GET /api/portfolio
-  - 返回 JSON，格式示例：
-
+返回格式：
 ```json
 {
   "principalTotal": 271610,
-  "todayTotal": 421.85,
-  "overallTotal": 13887,
-  "originalData": [ /* 数组，包含每条持仓记录 */ ]
+  "todayTotal": 371.45,
+  "overallTotal": 13982.00,
+  "originalData": [
+    {
+      "id": 1,
+      "platform": "Binance",
+      "coin": "ETH",
+      "price": 3245.67,
+      "principal": 50000,
+      "today": 125.50,
+      "total": 3766.50,
+      "apy": "7.53%",
+      "duration": "30天",
+      "strategy": "稳健复利策略",
+      "yieldCurve": [50000, 50030, 50065, 50090, 50120, 50155, 50180]
+    }
+    // ... 更多记录
+  ]
 }
 ```
 
-- 向后端添加或修改示例数据：编辑 `server.js` 中的 `originalData` 数组并重启服务。
+### 数据字段说明
+- `platform`: 交易平台名称
+- `coin`: 本金币种（如 BTC、ETH）
+- `price`: 当前币种价格（美元）
+- `principal`: 本金金额（美元）
+- `today`: 今日收益（美元）
+- `total`: 总体收益（美元）
+- `apy`: 年化收益率（百分比）
+- `duration`: 策略运行时长
+- `strategy`: 投资策略名称
+- `yieldCurve`: 收益曲线数据点数组
 
+## 🎨 样式定制
 
-## 前端（关键点）
+### 颜色变量
+在 `assets/styles.css` 中可修改以下 CSS 变量来定制配色：
 
-- 脚本文件 `assets/script.js` 会在 DOMContentLoaded 时：
-  - 绑定排序、分页与搜索交互
-  - 发起请求到 `/api/portfolio`（会按顺序尝试相对路径、当前 origin 以及 `http://localhost:3000`）
-  - 渲染顶部三项汇总（HTML 中的 id 分别为 `principalTotal`, `todayTotal`, `overallTotal`）
-  - 渲染表格（tbody id 为 `tbody`）并支持搜索（输入框 id 为 `search`）
-
-- 如果搜索无效，请在浏览器 DevTools 中查看 Console 是否显示 `search input:` 日志，或 Network 面板中确认 `/api/portfolio` 请求是否成功返回 200。
-
-
-## 常见问题（Troubleshooting）
-
-- 页面没有数据：
-  1. 确认后端服务正在运行（`node server.js` 或 `nodemon server.js`）。
-  2. 必须通过 `http://localhost:3000/` 打开页面，而非 `file://`。
-  3. 在浏览器 DevTools -> Network 检查 `/api/portfolio` 返回状态与响应体。
-  4. 在 Console 查看脚本日志：会打印“尝试从后端获取数据”和“成功从后端获取数据”等信息。
-
-- 修改 `server.js` 数据后没生效：你需要重启 node 进程（或使用 `nodemon` 自动重启）。例如：
-
-```powershell
-# 手动结束 node 进程（Windows）
-taskkill /F /IM node.exe
-# 再次启动
-node server.js
+```css
+:root {
+    --bg: #ffffff;            /* 背景色（纯白） */
+    --accent: #00e676;        /* 主强调色（亮绿） */
+    --accent-2: #00b8ff;      /* 次强调色（亮青） */
+    --purple: #9c27ff;        /* 紫色点缀 */
+    --text: #1e293b;          /* 文字颜色（深灰） */
+    --border: rgba(100, 150, 255, 0.2);  /* 边框颜色 */
+}
 ```
 
-- 脚本未加载或样式不生效：在 Network 面板中确认 `assets/script.js` 与 `assets/styles.css` 返回 200。
+### 动画效果
+- `pulse-glow`: 脉冲光晕效果
+- `gradient-shift`: 渐变色移动效果
 
-- 缓存问题：强制刷新页面（Windows）：`Ctrl+F5`。
+可通过修改 CSS 底部的 `@keyframes` 来调整动画速度和效果。
 
+## 📱 响应式设计
 
-## 可能的下一步改进（建议）
+- **桌面端**（> 900px）：完整功能 + 所有动画效果
+- **移动端**（≤ 900px）：
+  - 表格转换为卡片式布局
+  - 禁用部分动画以提升性能
+  - 优化触摸交互
 
-- 把示例数据从 `server.js` 拆分到 `data.json` 并在服务器启动时读取，便于维护。
-- 增加 POST/PUT 接口以动态管理持仓数据，并持久化到文件或数据库。
-- 添加单元测试（例如使用 Jest）覆盖后端逻辑。
-- 增强前端 UI（高亮、图表、导出 CSV 等）。
+## 🔧 开发指南
 
+### 添加新数据
+修改 `server.js` 中的 `originalData` 数组：
 
-## 联系与授权
+```javascript
+const originalData = [
+    {
+        id: 11,
+        platform: "新平台",
+        coin: "新币种",
+        price: 100.00,
+        principal: 10000,
+        today: 50.00,
+        total: 500.00,
+        apy: "5.0%",
+        duration: "30天",
+        strategy: "新策略",
+        yieldCurve: [10000, 10050, 10100, 10150, 10200, 10250, 10300]
+    },
+    // ... 其他数据
+];
+```
 
-此示例项目供学习与演示使用，你可以自由修改和扩展。
+### 修改每页显示条数
+在 `assets/script.js` 中修改 `PAGE_SIZE` 常量：
+
+```javascript
+const PAGE_SIZE = 10;  // 改为你想要的数量
+```
+
+### 自定义搜索字段
+在 `assets/script.js` 的搜索事件监听器中添加更多字段：
+
+```javascript
+currentFiltered = originalData.filter(r => {
+    const p = (r.platform || '').toString().toLowerCase();
+    const c = (r.coin || '').toString().toLowerCase();
+    const s = (r.strategy || '').toString().toLowerCase(); // 新增策略搜索
+    return p.includes(term) || c.includes(term) || s.includes(term);
+});
+```
+
+## 🌟 最佳实践
+
+1. **性能优化**：
+   - 收益曲线数据点建议控制在 7-15 个
+   - 移动端自动禁用动画以节省性能
+   - 使用防抖（debounce）优化搜索输入
+
+2. **数据安全**：
+   - 生产环境建议连接真实数据库
+   - 添加用户认证和授权
+   - 启用 HTTPS
+
+3. **可扩展性**：
+   - 模块化的代码结构便于添加新功能
+   - CSS 变量系统支持快速主题切换
+   - RESTful API 设计便于集成
+
+## 📄 License
+
+MIT License - 可自由使用和修改
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+**打造极致的 Web3 投资组合体验** 🚀✨
+

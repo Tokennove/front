@@ -11,7 +11,6 @@ const tbody = document.getElementById('tbody');
 const pageInfo = document.getElementById('pageInfo');
 const prevBtn = document.getElementById('prevPage');
 const nextBtn = document.getElementById('nextPage');
-const searchEl = document.getElementById('search');
 // 每页固定 10 条
 const PAGE_SIZE = 10;
 
@@ -117,7 +116,7 @@ function initFromApi() {
 
 function renderTable() {
     if (isLoading) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;color:#666;">加载中...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:20px;color:#666;">加载中...</td></tr>`;
         pageInfo.textContent = '加载中...';
         prevBtn.disabled = true;
         nextBtn.disabled = true;
@@ -132,23 +131,26 @@ function renderTable() {
 
     if (pageSlice.length === 0) {
         tbody.innerHTML = `
-      <tr><td colspan="8" style="text-align:center;padding:20px;color:#666;">没有匹配结果</td></tr>
+      <tr><td colspan="10" style="text-align:center;padding:20px;color:#666;">没有匹配结果</td></tr>
     `;
     } else {
         tbody.innerHTML = pageSlice.map(row => {
             const todayClass = row.today > 0 ? 'num--green' : (row.today < 0 ? 'num--red' : 'num--muted');
             const totalClass = row.total > 0 ? 'num--green' : (row.total < 0 ? 'num--red' : 'num--muted');
+            // 收益曲线：使用 SVG 图表展示
+            const yieldCurveDisplay = renderSparkline(row.yieldCurve);
             return `
       <tr>
-        <td data-label="平台">${escapeHtml(row.platform)}</td>
-        <td data-label="币种">${escapeHtml(row.coin)}</td>
-        <!-- 当前价使用 .price-val 并添加 $ 前缀 -->
+        <td data-label="平台"><span class="platform">${escapeHtml(row.platform)}</span></td>
+        <td data-label="本金币种">${escapeHtml(row.coin)}</td>
         <td data-label="当前价"><span class="price-val">$${formatSimpleNumber(row.price)}</span></td>
         <td data-label="本金">$${formatSimpleNumber(row.principal)}</td>
         <td data-label="今日收益" class="${todayClass}">${formatSignNumber(row.today)}</td>
         <td data-label="总体收益" class="${totalClass}">${formatSignNumber(row.total)}</td>
         <td data-label="APY"><span class="apy-pill">${escapeHtml(row.apy)}</span></td>
-        <td data-label="质押时长">${escapeHtml(row.duration)}</td>
+        <td data-label="策略">${escapeHtml(row.strategy || '-')}</td>
+        <td data-label="运行时长">${escapeHtml(row.duration)}</td>
+        <td data-label="收益曲线">${yieldCurveDisplay}</td>
       </tr>
     `
         }).join('');
@@ -194,6 +196,15 @@ function updateSortIndicators() {
 function init() {
     // 绑定表头排序
     document.querySelectorAll('.th-btn').forEach(btn => {
+        // 让 APY 列的表头居中（如果存在）
+        const headerKey = btn.getAttribute('data-key');
+        if (headerKey === 'apy') {
+            const th = btn.closest('th');
+            if (th) {
+                th.style.textAlign = 'center';
+                th.style.verticalAlign = 'middle';
+            }
+        }
         btn.addEventListener('click', () => {
             const key = btn.getAttribute('data-key');
             if (!key) return;
@@ -255,6 +266,63 @@ function init() {
     // 初次渲染：保持原始顺序（默认不排序）
     applySort(); // 当前 currentSort.key 为 null，会恢复原始数据
     renderTable();
+}
+
+// 生成收益曲线的 SVG 迷你图表（白色背景 Web3 风格）
+function renderSparkline(dataPoints) {
+    if (!Array.isArray(dataPoints) || dataPoints.length < 2) {
+        return '<span style="color:#9ca3af;">-</span>';
+    }
+
+    const width = 80;
+    const height = 30;
+    const padding = 3;
+
+    // 计算数据范围
+    const min = Math.min(...dataPoints);
+    const max = Math.max(...dataPoints);
+    const range = max - min || 1; // 避免除以0
+
+    // 将数据点转换为坐标
+    const points = dataPoints.map((val, i) => {
+        const x = padding + (i / (dataPoints.length - 1)) * (width - 2 * padding);
+        const y = height - padding - ((val - min) / range) * (height - 2 * padding);
+        return `${x.toFixed(2)},${y.toFixed(2)}`;
+    }).join(' ');
+
+    // 为渐变填充创建路径（添加底部封闭区域）
+    const firstX = padding;
+    const lastX = padding + (width - 2 * padding);
+    const bottomY = height - padding;
+
+    const areaPoints = `${firstX},${bottomY} ${points} ${lastX},${bottomY}`;
+
+    // 生成唯一 ID 以避免多个 SVG 之间渐变冲突
+    const uniqueId = 'gradient-' + Math.random().toString(36).substr(2, 9);
+
+    // 判断涨跌使用不同颜色
+    const isUp = dataPoints[dataPoints.length - 1] >= dataPoints[0];
+    const strokeColor = isUp ? '#00e676' : '#ff1744';
+    const gradientStartColor = isUp ? '#00e676' : '#ff1744';
+    const gradientEndColor = isUp ? '#00e676' : '#ff1744';
+
+    return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet" style="display:block;margin:0 auto;max-width:100%;max-height:100%;">
+        <defs>
+            <linearGradient id="${uniqueId}" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:${gradientStartColor};stop-opacity:0.3" />
+                <stop offset="100%" style="stop-color:${gradientEndColor};stop-opacity:0.02" />
+            </linearGradient>
+            <filter id="glow-${uniqueId}" x="-5%" y="-5%" width="110%" height="110%">
+                <feGaussianBlur stdDeviation="0.6" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        <polygon points="${areaPoints}" fill="url(#${uniqueId})"/>
+        <polyline points="${points}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow-${uniqueId})"/>
+    </svg>`;
 }
 
 // 简化的千分位不带 + 号，用于 price/principal 显示

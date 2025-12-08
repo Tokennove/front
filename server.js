@@ -19,117 +19,138 @@ const PORT = process.env.PORT || 3000;
 // let originalData = []; // 默认空数组，可在以后从文件或数据库加载真实数据
 
 const originalData = [
-    {
-        id: 1,
-        platform: 'Binance',
-        coin: 'ETH',
-        price: 3245.67,
-        principal: 50000,
-        today: 125.50,
-        total: 3766.50,
-        apy: '7.53%',
-        duration: '30天'
-    },
-    {
-        id: 2,
-        platform: 'Coinbase',
-        coin: 'BTC',
-        price: 68432.12,
-        principal: 100000,
-        today: 245.80,
-        total: 7374.00,
-        apy: '7.37%',
-        duration: '60天'
-    },
-    {
-        id: 3,
-        platform: 'Kraken',
-        coin: 'SOL',
-        price: 142.83,
-        principal: 20000,
-        today: -52.40,
-        total: 1572.00,
-        apy: '7.86%',
-        duration: '90天'
-    },
-    {
-        id: 4,
-        platform: 'Binance',
-        coin: 'USDT',
-        price: 1.00,
-        principal: 30000,
-        today: 45.00,
-        total: -1350.00,
-        apy: '4.5%',
-        duration: '15天'
-    },
-    {
-        id: 5,
-        platform: 'OKX',
-        coin: 'MATIC',
-        price: 0.85,
-        principal: 15000,
-        today: 28.50,
-        total: 855.00,
-        apy: '5.7%',
-        duration: '45天'
-    },
-    {
-        id: 6,
-        platform: 'Huobi',
-        coin: 'DOT',
-        price: 7.42,
-        principal: 25000,
-        today: -68.75,
-        total: 2062.50,
-        apy: '8.25%',
-        duration: '30天'
-    },
-    {
-        id: 7,
-        platform: 'Coinbase',
-        coin: 'AVAX',
-        price: 38.56,
-        principal: 18000,
-        today: 41.40,
-        total: -1242.00,
-        apy: '6.9%',
-        duration: '60天'
-    },
-    {
-        id: 8,
-        platform: 'Kraken',
-        coin: 'ADA',
-        price: 0.62,
-        principal: 12000,
-        today: 26.40,
-        total: 792.00,
-        apy: '6.6%',
-        duration: '90天'
-    },
-    {
-        id: 9,
-        platform: 'AVAE',
-        coin: 'XRP',
-        price: 620,
-        principal: 1600,
-        today: 2.40,
-        total: 12.00,
-        apy: '5.6%',
-        duration: '90天'
-    },
-    {
-        id: 10,
-        platform: 'LIDO',
-        coin: 'BCH',
-        price: 22.62,
-        principal: 10,
-        today: 28,
-        total: 45.00,
-        apy: '9.6%',
-        duration: '90天'
-    }
-];
+        {
+            "id": 1,
+            "platform": "Binance",
+            "coin": "ETH",
+            "price": 3245.67,
+            "principal": 50000,
+            "today": 125.50,
+            "total": 3766.50,
+            "apy": "7.53%",
+            "duration": "30天",
+            "strategy": "稳健复利策略",
+            "yieldCurve": [50000, 50030, 50065, 50090, 50120, 50155, 50180]
+        },
+        {
+            "id": 2,
+            "platform": "Coinbase",
+            "coin": "BTC",
+            "price": 68432.12,
+            "principal": 100000,
+            "today": 245.80,
+            "total": 7374.00,
+            "apy": "7.37%",
+            "duration": "60天",
+            "strategy": "动量趋势策略",
+            "yieldCurve": [100000, 100080, 100160, 100230, 100310, 100420, 100510]
+        },
+        {
+            "id": 3,
+            "platform": "Kraken",
+            "coin": "SOL",
+            "price": 142.83,
+            "principal": 20000,
+            "today": -52.40,
+            "total": 1572.00,
+            "apy": "7.86%",
+            "duration": "90天",
+            "strategy": "网格低买高卖",
+            "yieldCurve": [20000, 19980, 20010, 20040, 20020, 20060, 20090]
+        },
+        {
+            "id": 4,
+            "platform": "Binance",
+            "coin": "USDT",
+            "price": 1.00,
+            "principal": 30000,
+            "today": 45.00,
+            "total": -1350.00,
+            "apy": "4.5%",
+            "duration": "15天",
+            "strategy": "稳定币套利策略",
+            "yieldCurve": [30000, 30005, 30008, 30012, 30010, 30015, 30018]
+        },
+        {
+            "id": 5,
+            "platform": "OKX",
+            "coin": "MATIC",
+            "price": 0.85,
+            "principal": 15000,
+            "today": 28.50,
+            "total": 855.00,
+            "apy": "5.7%",
+            "duration": "45天",
+            "strategy": "均值回归策略",
+            "yieldCurve": [15000, 15020, 15035, 15040, 15070, 15085, 15100]
+        },
+        {
+            "id": 6,
+            "platform": "Huobi",
+            "coin": "DOT",
+            "price": 7.42,
+            "principal": 25000,
+            "today": -68.75,
+            "total": 2062.50,
+            "apy": "8.25%",
+            "duration": "30天",
+            "strategy": "趋势反转策略",
+            "yieldCurve": [25000, 24970, 24990, 24980, 25010, 25030, 25060]
+        },
+        {
+            "id": 7,
+            "platform": "Coinbase",
+            "coin": "AVAX",
+            "price": 38.56,
+            "principal": 18000,
+            "today": 41.40,
+            "total": -1242.00,
+            "apy": "6.9%",
+            "duration": "60天",
+            "strategy": "波段交易策略",
+            "yieldCurve": [18000, 18010, 18025, 18040, 18055, 18050, 18070]
+        },
+        {
+            "id": 8,
+            "platform": "Kraken",
+            "coin": "ADA",
+            "price": 0.62,
+            "principal": 12000,
+            "today": 26.40,
+            "total": 792.00,
+            "apy": "6.6%",
+            "duration": "90天",
+            "strategy": "长期持有策略",
+            "yieldCurve": [12000, 12010, 12020, 12035, 12045, 12060, 12080]
+        },
+        {
+            "id": 9,
+            "platform": "AVAE",
+            "coin": "XRP",
+            "price": 620,
+            "principal": 1600,
+            "today": 2.40,
+            "total": 12.00,
+            "apy": "5.6%",
+            "duration": "90天",
+            "strategy": "跨交易所套利",
+            "yieldCurve": [1600, 1602, 1604, 1603, 1606, 1607, 1609]
+        },
+        {
+            "id": 10,
+            "platform": "LIDO",
+            "coin": "BCH",
+            "price": 22.62,
+            "principal": 10,
+            "today": 28,
+            "total": 45.00,
+            "apy": "9.6%",
+            "duration": "90天",
+            "strategy": "节点质押收益策略",
+            "yieldCurve": [10, 10.02, 10.05, 10.08, 10.10, 10.12, 10.15]
+        }
+    ];
+
 
 function calcTotals(data) {
     const principalTotal = data.reduce((s, r) => s + (Number(r.principal) || 0), 0);

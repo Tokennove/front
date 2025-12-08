@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>质押投资组合</title>
+    <title>Alpha投资组合</title>
     <link rel="stylesheet" href="assets/styles.css"/>
 
     <!-- 分页样式已迁移至 assets/styles.css，保持 head 简洁 -->
@@ -11,8 +11,8 @@
 <body>
 <main class="wrap">
     <header class="page-header">
-        <h1>质押投资组合</h1>
-        <p class="subtitle">管理并追踪您的加密货币质押收益</p>
+        <h1>Alpha投资组合</h1>
+        <p class="subtitle">管理并追踪您的加密货币投资收益</p>
     </header>
 
     <section class="summary">
@@ -40,9 +40,9 @@
             <thead>
             <tr>
                 <th>平台</th>
-                <th>币种</th>
+                <th>本金币种</th>
                 <th>
-                    <button class="th-btn" data-key="price" type="button">当前价 <span class="price-marker">$</span>
+                    <button class="th-btn" data-key="price" type="button">当前价<span class="price-marker">$</span>
                         <span class="sort-indicator"></span></button>
                 </th>
                 <th>
@@ -58,7 +58,9 @@
                     </button>
                 </th>
                 <th>APY</th>
-                <th>质押时长</th>
+                <th>策略</th>
+                <th>运行时长</th>
+                <th>收益曲线</th>
             </tr>
             </thead>
             <tbody id="tbody">
