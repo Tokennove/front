@@ -147,9 +147,9 @@ function renderTable() {
         <td data-label="本金">$${formatSimpleNumber(row.principal)}</td>
         <td data-label="今日收益" class="${todayClass}">${formatSignNumber(row.today)}</td>
         <td data-label="总体收益" class="${totalClass}">${formatSignNumber(row.total)}</td>
-        <td data-label="APY"><span class="apy-pill">${escapeHtml(row.apy)}</span></td>
+        <td data-label="APY"><span class="apy-pill">${escapeHtml(row.apy)}%</span></td>
         <td data-label="策略">${escapeHtml(row.strategy || '-')}</td>
-        <td data-label="运行时长">${escapeHtml(row.duration)}</td>
+        <td data-label="运行时长">${escapeHtml(row.duration)}天</td>
         <td data-label="收益曲线">${yieldCurveDisplay}</td>
       </tr>
     `
@@ -327,15 +327,19 @@ function renderSparkline(dataPoints) {
 
 // 简化的千分位不带 + 号，用于 price/principal 显示
 function formatSimpleNumber(val) {
-    if (typeof val !== 'number') return escapeHtml(String(val));
-    return val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if (val === null || val === undefined) return '-';
+    const num = Number(val);
+    if (isNaN(num)) return '-';
+    return num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 // 带符号显示（今日/总体收益）
 function formatSignNumber(val) {
-    if (typeof val !== 'number') return escapeHtml(String(val));
-    const abs = Math.abs(val).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    return (val >= 0 ? `+$${abs}` : `-$${abs}`);
+    if (val === null || val === undefined) return '-';
+    const num = Number(val);
+    if (isNaN(num)) return '-';
+    const abs = Math.abs(num).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    return (num >= 0 ? `+$${abs}` : `-$${abs}`);
 }
 
 function escapeHtml(s) {
