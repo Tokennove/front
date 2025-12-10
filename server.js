@@ -17,6 +17,8 @@ app.use((req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
+const hyperliquidPriceUrl = process.env.HYPERLIQUID_PRICE || 'https://api.hyperliquid.xyz/info';
+
 // PostgreSQL 数据库连接配置
 const pool = new Pool({
     host: process.env.DB_HOST || '127.0.0.1',
@@ -121,7 +123,7 @@ async function fetchPlatformDailyEarnings() {
                 id: row.id,
                 platform: row.platform || '',
                 coin: row.coin_symbol || '',
-                price: null, // 暂时为空，等待后续 API 获取
+                price: await getHLPrices(row.coin_symbol || 0),
                 principal: Number(row.principal_usd) || 0,
                 today: todayEarnings, // 今日收益（从子表查询当前日期）
                 total: totalEarnings, // 总体收益（子表所有收益求和）
@@ -174,6 +176,36 @@ function calculateAPY(principal, totalEarnings, daysElapsed) {
     const apy = (totalEarnings / principal) * (365 / daysElapsed) * 100;
 
     return apy.toFixed(2);
+}
+
+// 从 Hyperliquid 获取加密货币价格
+async function getHLPrices(coinSymbol) {
+    // 转换为大写
+    const coin = coinSymbol.toUpperCase();
+
+    // 稳定币列表（直接返回1）
+    const stableCoins = ['USDT', 'USDC', 'DAI', 'USDE'];
+
+    if (stableCoins.includes(coin)) {
+        return 1;
+    }
+
+    // 非稳定币从 Hyperliquid 获取价格
+    try {
+        const res = await fetch(hyperliquidPriceUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({type: "allMids"})
+        });
+
+        const mids = await res.json();
+        const price = mids[coin];
+
+        return price ? Number(price) : null;
+    } catch (err) {
+        console.error(`❌ 获取 ${coin} 价格出错：`, err.message);
+        return null;
+    }
 }
 
 // 异步 API 端点：读取数据库数据并返回

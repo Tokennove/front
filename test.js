@@ -1,30 +1,33 @@
-const { Hyperliquid } = require('hyperliquid');
+async function getHLPrices(coinSymbol) {
+    // 转换为大写
+    const coin = coinSymbol.toUpperCase();
 
-/**
- * 获取指定币种的当前价格（mid price）
- * @param {string[]} symbols - 例如 ['SOL', 'ETH', 'BTC']
- */
-async function getPrices(symbols) {
-    const sdk = new Hyperliquid({ enableWs: false }); // 不启用 WebSocket
+    // 稳定币列表（直接返回1）
+    const stableCoins = ['USDT', 'USDC', 'DAI', 'USDE'];
 
-    // 获取所有市场 mid price
-    const allMids = await sdk.info.getAllMids();
+    if (stableCoins.includes(coin)) {
+        return 1;
+    }
 
-    // 筛选出指定币种价格
-    const result = {};
-    symbols.forEach(sym => {
-        if (allMids[sym] !== undefined) {
-            result[sym] = allMids[sym];
-        } else {
-            result[sym] = null; // 币种不存在
-        }
-    });
+    // 非稳定币从 Hyperliquid 获取价格
+    try {
+        const res = await fetch('https://api.hyperliquid.xyz/info', {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({type: "allMids"})
+        });
 
-    return result;
+        const mids = await res.json();
+        const price = mids[coin];
+
+        return price ? Number(price) : null;
+    } catch (err) {
+        console.error(`❌ 获取 ${coin} 价格出错：`, err.message);
+        return null;
+    }
 }
 
-// 示例
-getPrices(['SOL', 'ETH', 'BTC']).then(prices => {
-    console.log(prices);
-    // 输出示例: { SOL: 142.83, ETH: 3245.67, BTC: 68432.12 }
-}).catch(console.error);
+// 测试
+if (require.main === module) {
+    getHLPrices('bch').then(console.log);
+}
