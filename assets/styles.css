@@ -25,7 +25,9 @@
     --shadow: rgba(0, 0, 0, 0.04);
 }
 
-* { box-sizing: border-box; }
+* {
+    box-sizing: border-box;
+}
 
 html, body {
     height: 100%;
@@ -50,7 +52,7 @@ body {
 .page-header h1 {
     font-size: 32px;
     margin: 0;
-    color: hsla(243, 83%, 5%, 0.788); 
+    color: hsla(243, 83%, 5%, 0.788);
     font-weight: 800;
     letter-spacing: -0.5px;
 }
@@ -78,7 +80,7 @@ body {
 }
 
 .card:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     transform: translateY(-3px);
 }
 
@@ -95,7 +97,9 @@ body {
 }
 
 /* Search Box */
-.controls { margin: 20px 0 24px; }
+.controls {
+    margin: 20px 0 24px;
+}
 
 #search {
     width: 100%;
@@ -110,7 +114,7 @@ body {
 
 #search:focus {
     border-color: #d0d0d0;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.04);
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
 
 /* Table Wrapper */
@@ -173,9 +177,19 @@ body {
 }
 
 /* Numbers */
-.num--green { color: var(--accent); font-weight: 700; }
-.num--red { color: var(--red); font-weight: 700; }
-.num--muted { color: var(--muted); }
+.num--green {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.num--red {
+    color: var(--red);
+    font-weight: 700;
+}
+
+.num--muted {
+    color: var(--muted);
+}
 
 /* Pills */
 .apy-pill {
@@ -228,7 +242,7 @@ body {
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    color: var(--muted);   /* 保持和表头一样的灰色 */
+    color: var(--muted); /* 保持和表头一样的灰色 */
     display: inline-flex;
     align-items: center;
     gap: 4px;
@@ -238,7 +252,7 @@ body {
 .sort-indicator::before {
     content: "▼";
     font-size: 12px;
-    color: #2563eb;   /* 蓝色箭头 */
+    color: #2563eb; /* 蓝色箭头 */
     opacity: 1;
 }
 

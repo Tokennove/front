@@ -125,12 +125,16 @@ async function fetchPlatformDailyEarnings() {
                 coin: row.coin_symbol || '',
                 price: await getHLPrices(row.coin_symbol || 0),
                 principal: Number(row.principal_usd) || 0,
-                today: todayEarnings, // 今日收益（从子表查询当前日期）
-                total: totalEarnings, // 总体收益（子表所有收益求和）
-                apy: apy, // 年化收益率 APY
+                // 今日收益（从子表查询当前日期）
+                today: todayEarnings,
+                // 总体收益（子表所有收益求和）
+                total: totalEarnings,
+                // 年化收益率 APY
+                apy: apy,
                 duration: row.duration || '',
                 strategy: row.strategy || '',
-                yieldCurve: allEarnings // 收益曲线（所有历史收益数组）
+                // 收益曲线（所有历史收益数组）
+                yieldCurve: allEarnings
             };
 
             mappedData.push(mapped);
@@ -159,6 +163,7 @@ async function fetchDataFromDB() {
     }
 }
 
+// 计算总计数值
 function calcTotals(data) {
     const principalTotal = data.reduce((s, r) => s + (Number(r.principal) || 0), 0);
     const todayTotal = data.reduce((s, r) => s + (Number(r.today) || 0), 0);
