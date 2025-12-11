@@ -9,14 +9,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 请求日志中间件（用于调试）
+// 请求日志中间件
 app.use((req, res, next) => {
     console.log(new Date().toISOString(), req.method, req.url);
     next();
 });
 
+// 端口
 const PORT = process.env.PORT || 3000;
 
+// Hyperliquid 价格 API URL
 const hyperliquidPriceUrl = process.env.HYPERLIQUID_PRICE || 'https://api.hyperliquid.xyz/info';
 
 // PostgreSQL 数据库连接配置
@@ -234,7 +236,7 @@ app.get('/api/portfolio', async (req, res) => {
     }
 });
 
-// 明确托管 assets 目录
+// 托管 assets 目录
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 // 托管 image 目录
