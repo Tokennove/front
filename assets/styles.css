@@ -176,6 +176,23 @@ body {
     justify-content: center;
 }
 
+/* Coin name display with image */
+.coin-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.coin-name img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
 /* Numbers */
 .num--green {
     color: var(--accent);

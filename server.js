@@ -237,6 +237,9 @@ app.get('/api/portfolio', async (req, res) => {
 // 明确托管 assets 目录
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
+// 托管 image 目录
+app.use('/image', express.static(path.join(__dirname, 'image')));
+
 // 返回根页面 index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));

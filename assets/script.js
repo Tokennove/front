@@ -139,10 +139,14 @@ function renderTable() {
             const totalClass = row.total > 0 ? 'num--green' : (row.total < 0 ? 'num--red' : 'num--muted');
             // 收益曲线：使用 SVG 图表展示
             const yieldCurveDisplay = renderSparkline(row.yieldCurve);
+            // 币种图片（根据币种名称构造图片 URL）
+            const coinImageHtml = row.coin
+                ? `<img src="/image/${row.coin.toUpperCase()}.png" alt="${escapeHtml(row.coin)}" onerror="this.style.display='none'" />`
+                : '';
             return `
       <tr>
         <td data-label="平台"><span class="platform">${escapeHtml(row.platform)}</span></td>
-        <td data-label="本金币种"><span class="coin-name">${escapeHtml(row.coin)}</span></td>
+        <td data-label="本金币种"><span class="coin-name">${coinImageHtml}${escapeHtml(row.coin)}</span></td>
         <td data-label="当前价"><span class="price-val">$${formatSimpleNumber(row.price)}</span></td>
         <td data-label="本金">$${formatSimpleNumber(row.principal)}</td>
         <td data-label="今日收益" class="${todayClass}">${formatSignNumber(row.today)}</td>
