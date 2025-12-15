@@ -1,7 +1,6 @@
 :root {
     /* Background */
-    --bg: #111111; /* Uniswap 背景不是纯白，是淡灰 */
-    --panel: #ffffff;
+    --bg: #111111;
 
     /* Typography */
     --text: #1a1a1a;
@@ -11,18 +10,20 @@
     --muted: #9ca3af;
 
     /* Branding / Accent */
-    --primary: #ff007a; /* Uniswap 品牌粉 */
-    --accent: #16a34a; /* 涨幅绿色（柔和） */
+    --primary: #ff007a;
+    --accent: #16a34a;
     --accent-glow: rgba(22, 163, 74, 0.15);
 
-    --red: #dc2626; /* 跌幅红色 */
+    --red: #dc2626;
     --purple: #a855f7;
     --purple-glow: rgba(168, 85, 247, 0.2);
 
-    /* Borders / Card / Shadow */
-    --card: #ffffff;
-    --border: #e5e7eb;
-    --shadow: rgba(0, 0, 0, 0.04);
+    /* Glass panel（新增，核心） */
+    --glass-bg: rgba(255, 255, 255, 0.75);
+    --glass-bg-strong: rgba(255, 255, 255, 0.82);
+    --glass-border: rgba(255, 255, 255, 0.35);
+    --glass-shadow: rgba(0, 0, 0, 0.14);
+    --glass-blur: blur(14px);
 }
 
 * {
@@ -36,9 +37,30 @@ html, body {
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing: antialiased;
+
+    /* 背景（暗化层 + 渐变 + 图片） */
+    background: linear-gradient(
+            rgba(17, 17, 17, 0.55),
+            rgba(17, 17, 17, 0.75)
+    ),
+    radial-gradient(
+            1200px 600px at 10% -10%,
+            rgba(56, 189, 248, 0.12),
+            transparent 60%
+    ),
+    radial-gradient(
+            800px 400px at 90% 10%,
+            rgba(168, 85, 247, 0.10),
+            transparent 60%
+    ),
+    url("/image/backg.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 /* Layout container */
@@ -58,8 +80,8 @@ body {
 }
 
 .subtitle {
-    color: var(--text-subtitle);
     margin-top: 6px;
+    color: rgba(255, 255, 255, 0.65);
 }
 
 /* Summary Cards */
@@ -71,16 +93,20 @@ body {
 }
 
 .card {
-    background: var(--card);
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
     padding: 20px 24px;
     border-radius: 16px;
-    border: 1px solid var(--border);
-    box-shadow: 0 2px 8px var(--shadow);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 12px 32px var(--glass-shadow);
+
     transition: all 0.25s ease;
 }
 
 .card:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
     transform: translateY(-3px);
 }
 
@@ -105,28 +131,33 @@ body {
     width: 100%;
     padding: 14px 18px;
     border-radius: 12px;
-    background: white;
-    border: 1px solid var(--border);
+
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+
+    border: 1px solid var(--glass-border);
     color: var(--text);
     font-size: 14px;
-    transition: 0.25s all;
 }
 
 #search:focus {
-    border-color: #d0d0d0;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-/* Table Wrapper */
+/* Table Wrapper（重点） */
 .table-wrap {
-    background: white;
+    background: var(--glass-bg-strong);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
     border-radius: 16px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--glass-border);
     padding: 24px;
-    box-shadow: 0 2px 12px var(--shadow);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
 }
 
-/* Table Header */
+/* Table */
 .positions {
     width: 100%;
     border-collapse: collapse;
@@ -138,17 +169,16 @@ body {
     padding: 12px 16px;
     color: var(--muted);
     font-size: 13px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* Table Rows */
 .positions tbody tr {
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     transition: background 0.15s ease;
 }
 
 .positions tbody tr:hover {
-    background: #fafafa;
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .positions td {
@@ -156,41 +186,37 @@ body {
     white-space: nowrap;
 }
 
-/* Platform display */
+/* Platform */
 .platform {
     display: flex;
     align-items: center;
     gap: 12px;
     font-weight: 700;
-    color: var(--text);
 }
 
 .platform .logo {
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: #f3f4f6;
-    border: 1px solid var(--border);
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-/* Coin name display with image */
+/* Coin name */
 .coin-name {
     display: flex;
     align-items: center;
     gap: 8px;
     font-weight: 600;
-    color: var(--text);
 }
 
 .coin-name img {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    object-fit: contain;
-    flex-shrink: 0;
 }
 
 /* Numbers */
@@ -208,13 +234,12 @@ body {
     color: var(--muted);
 }
 
-/* Pills */
+/* APY pill */
 .apy-pill {
     display: inline-block;
     padding: 6px 12px;
     border-radius: 999px;
-    background: #f3f4f6;
-    border: 1px solid var(--border);
+    background: rgba(37, 99, 235, 0.1);
     font-weight: 600;
     color: #2563eb;
 }
@@ -227,60 +252,40 @@ body {
     margin-top: 18px;
 }
 
-.page-btn {
+.page-btn,
+.page-info {
     padding: 10px 16px;
     border-radius: 8px;
-    border: 1px solid var(--border);
-    background: white;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--glass-border);
     font-size: 13px;
     font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s all;
 }
 
-.page-btn:hover:not([disabled]) {
-    background: #fafafa;
-}
-
-.page-info {
-    padding: 8px 16px;
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--text);
-}
-
-/* 排序按钮 —— 保持原来的 muted 颜色，不变黑、不加粗 */
+/* Sort button */
 .th-btn {
     background: none;
     border: none;
-    padding: 0;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    color: var(--muted); /* 保持和表头一样的灰色 */
+    color: var(--muted);
     display: inline-flex;
     align-items: center;
     gap: 4px;
 }
 
-/* 默认箭头（你要求：默认蓝色 ▼） */
 .sort-indicator::before {
     content: "▼";
     font-size: 12px;
-    color: #2563eb; /* 蓝色箭头 */
-    opacity: 1;
+    color: #2563eb;
 }
 
-/* 升序：蓝色 ▲ */
 .th-btn[aria-sort="ascending"] .sort-indicator::before {
     content: "▲";
-    color: #2563eb;
 }
 
-/* 降序：蓝色 ▼ */
 .th-btn[aria-sort="descending"] .sort-indicator::before {
     content: "▼";
-    color: #2563eb;
 }
