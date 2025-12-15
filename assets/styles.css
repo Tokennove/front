@@ -1,6 +1,6 @@
 :root {
     /* Background */
-    --bg: #f7f7f8; /* Uniswap 背景不是纯白，是淡灰 */
+    --bg: #111111; /* Uniswap 背景不是纯白，是淡灰 */
     --panel: #ffffff;
 
     /* Typography */
@@ -52,7 +52,7 @@ body {
 .page-header h1 {
     font-size: 32px;
     margin: 0;
-    color: hsla(243, 83%, 5%, 0.788);
+    color: #ffffff;
     font-weight: 800;
     letter-spacing: -0.5px;
 }
