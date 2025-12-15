@@ -3,27 +3,27 @@
     --bg: #111111;
 
     /* Typography */
-    --text: #1a1a1a;
-    --text-highlight: #111111;
+    --text: #e6eef8; /* adjust to light text on darker bg */
+    --text-highlight: #ffffff;
     --text-white: #ffffff;
-    --text-subtitle: #6e6e6e;
-    --muted: #9ca3af;
+    --text-subtitle: rgba(255, 255, 255, 0.72);
+    --muted: rgba(255, 255, 255, 0.6);
 
     /* Branding / Accent */
     --primary: #ff007a;
     --accent: #16a34a;
-    --accent-glow: rgba(22, 163, 74, 0.15);
+    --accent-glow: rgba(22, 163, 74, 0.12);
 
-    --red: #dc2626;
+    --red: #ff6b6b;
     --purple: #a855f7;
-    --purple-glow: rgba(168, 85, 247, 0.2);
+    --purple-glow: rgba(168, 85, 247, 0.14);
 
-    /* Glass panel（新增，核心） */
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-bg-strong: rgba(255, 255, 255, 0.82);
-    --glass-border: rgba(255, 255, 255, 0.35);
-    --glass-shadow: rgba(0, 0, 0, 0.14);
-    --glass-blur: blur(14px);
+    /* Glass panel（调整为更透明、更低对比） */
+    --glass-bg: rgba(255, 255, 255, 0.08); /* was 0.75 -> now very subtle */
+    --glass-bg-strong: rgba(255, 255, 255, 0.06); /* was 0.82 */
+    --glass-border: rgba(255, 255, 255, 0.06); /* softer border */
+    --glass-shadow: rgba(0, 0, 0, 0.08);
+    --glass-blur: blur(8px);
 }
 
 * {
@@ -42,20 +42,19 @@ body {
 
     /* 背景（暗化层 + 渐变 + 图片） */
     background: linear-gradient(
-            rgba(17, 17, 17, 0.55),
-            rgba(17, 17, 17, 0.75)
+            rgba(17, 17, 17, 0.35), /* reduced from 0.55 */ rgba(17, 17, 17, 0.45) /* reduced from 0.75 */
     ),
     radial-gradient(
             1200px 600px at 10% -10%,
-            rgba(56, 189, 248, 0.12),
+            rgba(56, 189, 248, 0.08), /* softer accent */
             transparent 60%
     ),
     radial-gradient(
             800px 400px at 90% 10%,
-            rgba(168, 85, 247, 0.10),
+            rgba(168, 85, 247, 0.06),
             transparent 60%
     ),
-    url("/image/backg.png");
+        /* 使用 workspace 中已存在的图片（ETH.png）作为占位背景，避免路径错误 */ url("/image/background.png");
 
     background-size: cover;
     background-position: center;
@@ -100,13 +99,13 @@ body {
     padding: 20px 24px;
     border-radius: 16px;
     border: 1px solid var(--glass-border);
-    box-shadow: 0 12px 32px var(--glass-shadow);
+    box-shadow: 0 8px 20px var(--glass-shadow); /* lighter shadow */
 
     transition: all 0.25s ease;
 }
 
 .card:hover {
-    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.10);
     transform: translateY(-3px);
 }
 
@@ -116,10 +115,16 @@ body {
 }
 
 .card .value {
-    font-weight: 700;
-    font-size: 24px;
+    font-weight: 800;
+    font-size: 26px; /* slightly larger for totals */
     margin-top: 8px;
     color: var(--text-highlight);
+}
+
+/* make the total card stand out: if you add a class .total on the card */
+.card.total {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* Search Box */
@@ -129,32 +134,37 @@ body {
 
 #search {
     width: 100%;
-    padding: 14px 18px;
+    padding: 12px 16px; /* slightly smaller padding */
     border-radius: 12px;
 
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(6px);
-
-    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.04); /* much darker/transparent */
     color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 14px;
+
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+#search::placeholder {
+    color: rgba(255, 255, 255, 0.45);
 }
 
 #search:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.16);
 }
 
-/* Table Wrapper（重点） */
+/* Table Wrapper（重点，降低不透明度让背景更可见） */
 .table-wrap {
     background: var(--glass-bg-strong);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 
     border-radius: 16px;
     border: 1px solid var(--glass-border);
     padding: 24px;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
 }
 
 /* Table */
@@ -162,6 +172,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    /* removed table-layout: fixed to restore original header behavior */
 }
 
 .positions thead th {
@@ -170,6 +181,8 @@ body {
     color: var(--muted);
     font-size: 13px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    /* restored previous behavior: allow header to wrap as before */
 }
 
 .positions tbody tr {
@@ -184,6 +197,8 @@ body {
 .positions td {
     padding: 12px 16px;
     white-space: nowrap;
+    overflow: hidden; /* keep cell ellipsis for body */
+    text-overflow: ellipsis;
 }
 
 /* Platform */
@@ -241,7 +256,7 @@ body {
     border-radius: 999px;
     background: rgba(37, 99, 235, 0.1);
     font-weight: 600;
-    color: #2563eb;
+    color: #bebfc3;
 }
 
 /* Pagination */
@@ -256,11 +271,17 @@ body {
 .page-info {
     padding: 10px 16px;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.85);
+    /* 提高透明度（更通透）：将背景 alpha 降到 0.06 */
+    background: rgba(255, 255, 255, 0.06); /* was 0.12 */
+    color: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(6px);
-    border: 1px solid var(--glass-border);
+    border: 1px solid rgba(255, 255, 255, 0.06); /* 边框更柔和 */
     font-size: 13px;
     font-weight: 600;
+}
+
+.page-btn:hover:not([disabled]) {
+    background: rgba(255, 255, 255, 0.10); /* hover 微增强可读性 */
 }
 
 /* Sort button */
