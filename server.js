@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 });
 
 // 端口
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.port || 3000;
 
 // Hyperliquid 价格 API URL
 const hyperliquidPriceUrl = process.env.HYPERLIQUID_PRICE || 'https://api.hyperliquid.xyz/info';
