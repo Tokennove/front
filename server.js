@@ -74,18 +74,44 @@ async function fetchTodayEarnings(yieldId, today) {
 }
 
 // 3. 获取子表 t_daily_earning_record 中该主表ID的所有收益（用于求和和收益曲线）
-async function fetchAllEarnings(yieldId) {
+async function fetchAllEarnings( yieldId) {
+    const sql = `
+        SELECT (SELECT last_nav
+                FROM t_daily_earning_record
+                WHERE t_yield_id = $1
+                ORDER BY biz_date DESC
+                   LIMIT 1 ) -
+            (
+                SELECT last_nav
+                FROM t_daily_earning_record
+                WHERE t_yield_id = $1
+            ORDER BY biz_date ASC
+            LIMIT 1
+            ) AS nav_diff
+    `;
+
+    // Use pg's result.rows and pass a single parameter for $1
+    const result = await pool.query(sql, [yieldId]);
+    const rows = result.rows;
+
+    // 无记录或 NULL 兜底
+    return rows[0]?.nav_diff ?? 0;
+}
+
+// 3.1 获取收益曲线：按日期返回 daily_earnings 数组
+async function fetchEarningsCurve(yieldId) {
     try {
-        const query = `
+        const sql = `
             SELECT daily_earnings
             FROM t_daily_earning_record
             WHERE t_yield_id = $1
-            ORDER BY created_at
+            ORDER BY biz_date ASC, created_at ASC
         `;
-        const result = await pool.query(query, [yieldId]);
-        return result.rows.map(row => Number(row.daily_earnings) || 0);
+        const result = await pool.query(sql, [yieldId]);
+        // 将可能的字符串/空值转为数字，空值兜底为 0
+        return result.rows.map(r => (r.daily_earnings == null ? 0 : Number(r.daily_earnings)));
     } catch (err) {
-        console.error(`❌ 查询主表ID ${yieldId} 的所有收益出错：`, err.message);
+        console.error(`❌ 获取收益曲线失败 yieldId=${yieldId}：`, err.message);
         return [];
     }
 }
@@ -109,16 +135,18 @@ async function fetchPlatformDailyEarnings() {
         for (const row of mainTable) {
             // 查询今日收益
             const todayEarnings = await fetchTodayEarnings(row.id, today);
+            console.log('todayEarnings',todayEarnings)
 
             // 查询所有收益数据
-            const allEarnings = await fetchAllEarnings(row.id);
-
-            // 计算总体收益（所有收益求和）
-            const totalEarnings = allEarnings.reduce((sum, val) => sum + val, 0);
+            const totalEarnings = await fetchAllEarnings(row.id);
+            console.log('totalEarnings',totalEarnings)
 
             // 计算运行天数：根据子表中的记录条数（每天一条记录）
-            const daysElapsed = allEarnings.length > 0 ? allEarnings.length : 1;
+            const daysElapsed = await countDailyRecordsByYieldId(row.id);
             const apy = calculateAPY(Number(row.principal_usd) || 0, totalEarnings, daysElapsed);
+
+            // 收益曲线（所有历史收益数组）
+            const yieldCurve = await fetchEarningsCurve(row.id);
 
             // 组装数据
             const mapped = {
@@ -136,7 +164,7 @@ async function fetchPlatformDailyEarnings() {
                 duration: row.duration || '',
                 strategy: row.strategy || '',
                 // 收益曲线（所有历史收益数组）
-                yieldCurve: allEarnings
+                yieldCurve
             };
 
             mappedData.push(mapped);
@@ -153,6 +181,26 @@ async function fetchPlatformDailyEarnings() {
         return [];
     }
 }
+
+/**
+ * 根据 yieldId 查询记录条数
+ */
+async function countDailyRecordsByYieldId( yieldId) {
+    const sql = `
+        SELECT COUNT(*) AS record_count
+        FROM t_daily_earning_record
+        WHERE t_yield_id = $1
+    `;
+
+    // Use pg's result.rows and pass a single parameter for $1
+    const result = await pool.query(sql, [yieldId]);
+    const rows = result.rows;
+
+    // Ensure numeric return
+    const count = rows[0]?.record_count ?? 0;
+    return typeof count === 'string' ? parseInt(count, 10) : Number(count);
+}
+
 
 // 从数据库读取 t_yield_record 表数据并进行字段映射
 async function fetchDataFromDB() {
