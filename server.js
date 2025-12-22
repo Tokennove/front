@@ -74,7 +74,7 @@ async function fetchTodayEarnings(yieldId, today) {
 }
 
 // 3. 获取子表 t_daily_earning_record 中该主表ID的所有收益（用于求和和收益曲线）
-async function fetchAllEarnings( yieldId) {
+async function fetchAllEarnings(yieldId) {
     const sql = `
         SELECT (SELECT last_nav
                 FROM t_daily_earning_record
@@ -135,15 +135,17 @@ async function fetchPlatformDailyEarnings() {
         for (const row of mainTable) {
             // 查询今日收益
             const todayEarnings = await fetchTodayEarnings(row.id, today);
-            console.log('todayEarnings',todayEarnings)
 
             // 查询所有收益数据
             const totalEarnings = await fetchAllEarnings(row.id);
-            console.log('totalEarnings',totalEarnings)
 
             // 计算运行天数：根据子表中的记录条数（每天一条记录）
-            const daysElapsed = await countDailyRecordsByYieldId(row.id);
-            const apy = calculateAPY(Number(row.principal_usd) || 0, totalEarnings, daysElapsed);
+            // const daysElapsed = await countDailyRecordsByYieldId(row.id);
+
+            // 运行分钟：根据子表中的记录条数（每天一条记录）
+            const minutesElapsed = await getElapsedMinutesByYieldId(row.id);
+
+            const apy = calculateAPY(Number(row.principal_usd) || 0, totalEarnings, minutesElapsed);
 
             // 收益曲线（所有历史收益数组）
             const yieldCurve = await fetchEarningsCurve(row.id);
@@ -185,7 +187,7 @@ async function fetchPlatformDailyEarnings() {
 /**
  * 根据 yieldId 查询记录条数
  */
-async function countDailyRecordsByYieldId( yieldId) {
+async function countDailyRecordsByYieldId(yieldId) {
     const sql = `
         SELECT COUNT(*) AS record_count
         FROM t_daily_earning_record
@@ -201,6 +203,28 @@ async function countDailyRecordsByYieldId( yieldId) {
     return typeof count === 'string' ? parseInt(count, 10) : Number(count);
 }
 
+/**
+ * 根据 t_yield_id 获取第一条的 created_at 和最后一条的 updated_at，返回二者相差的分钟数
+ */
+async function getElapsedMinutesByYieldId(yieldId) {
+    try {
+        const sql = `
+            SELECT
+                EXTRACT(EPOCH FROM (
+                    (SELECT updated_at FROM t_daily_earning_record WHERE t_yield_id = $1 ORDER BY created_at DESC LIMIT 1)
+                    -
+                    (SELECT created_at FROM t_daily_earning_record WHERE t_yield_id = $1 ORDER BY created_at ASC LIMIT 1)
+                )) / 60 AS minutes_diff
+        `;
+        const result = await pool.query(sql, [yieldId]);
+        const minutes = result.rows[0]?.minutes_diff;
+        // 兜底处理：无记录或 NULL 返回 0，确保为整数分钟
+        return minutes == null ? 0 : Math.floor(Number(minutes));
+    } catch (err) {
+        console.error(`❌ 计算分钟差失败 yieldId=${yieldId}：`, err.message);
+        return 0;
+    }
+}
 
 // 从数据库读取 t_yield_record 表数据并进行字段映射
 async function fetchDataFromDB() {
@@ -222,13 +246,13 @@ function calcTotals(data) {
 }
 
 // 计算年化收益率 APY (Annual Percentage Yield)
-function calculateAPY(principal, totalEarnings, daysElapsed) {
-    if (principal <= 0 || daysElapsed <= 0) {
+function calculateAPY(principal, totalEarnings, minutesElapsed) {
+    if (principal <= 0 || minutesElapsed <= 0) {
         return '0.00';
     }
 
-    // 公式：APY = (总收益 / 本金) * (365 / 运行天数) * 100
-    const apy = (totalEarnings / principal) * (365 / daysElapsed) * 100;
+    // 公式：APY = (总收益 / 本金) * (365 * 天 min /  total min) * 100
+    const apy = (totalEarnings / principal) * ((365 * (24 * 60)) / minutesElapsed) * 100;
 
     return apy.toFixed(2);
 }
