@@ -140,7 +140,7 @@ async function fetchPlatformDailyEarnings() {
             const totalEarnings = await fetchAllEarnings(row.id);
 
             // 计算运行天数：根据子表中的记录条数（每天一条记录）
-            // const daysElapsed = await countDailyRecordsByYieldId(row.id);
+            const daysElapsed = await countDailyRecordsByYieldId(row.id);
 
             // 运行分钟：根据子表中的记录条数（每天一条记录）
             const minutesElapsed = await getElapsedMinutesByYieldId(row.id);
@@ -163,7 +163,7 @@ async function fetchPlatformDailyEarnings() {
                 total: totalEarnings,
                 // 年化收益率 APY
                 apy: apy,
-                duration: row.duration || '',
+                duration: daysElapsed || '',
                 strategy: row.strategy || '',
                 // 收益曲线（所有历史收益数组）
                 yieldCurve
@@ -251,7 +251,7 @@ function calculateAPY(principal, totalEarnings, minutesElapsed) {
         return '0.00';
     }
 
-    // 公式：APY = (总收益 / 本金) * (365 * 天 min /  total min) * 100
+    // 公式：APY = (总收益 / 本金) * (365 * 一天的分钟数 /  total min) * 100
     const apy = (totalEarnings / principal) * ((365 * (24 * 60)) / minutesElapsed) * 100;
 
     return apy.toFixed(2);
